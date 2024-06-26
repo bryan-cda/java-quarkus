@@ -1,29 +1,52 @@
 package br.com.test.quarkus.rest.controller;
 
 import br.com.test.quarkus.domain.User;
-import br.com.test.quarkus.repository.UserRepository;
-import br.com.test.quarkus.request.CreateUserRequest;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import br.com.test.quarkus.service.UserService;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import java.net.URI;
+
+import static java.lang.String.format;
 
 @Path("/v1/users")
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(User user){
-        userRepository.save(user);
-        return Response.ok(user).build();
+        User createdUser = userService.saveUser(user);
+        return Response.created(URI.create(format("/v1/users/%s",createdUser.getId()))).build();
+    }
+
+    @GET
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response listUsers(){
+        return Response.ok(userService.listUsers()).build();
+    }
+
+    @DELETE
+    @Path("{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteUser(@PathParam("id") Long id){
+        userService.deleteUser(id);
+        return Response.ok().build();
+    }
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateUser(User user) throws Exception {
+        return Response.ok(userService.updateUser(user)).build();
     }
 }
