@@ -1,25 +1,31 @@
 package br.com.test.quarkus.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.Column;
+import java.sql.Date;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class CreateUserRequest {
-    private String name;
+
+    @JsonProperty("first_name")
+    private String firstName;
+
+    @JsonProperty("last_name")
+    private String lastName;
+
     private String username;
 
-    public CreateUserRequest() {
-    }
+    private Date birthday;
 
-    public String getName() {
-        return name;
-    }
+    @JsonProperty("user_password")
+    private String userPassword;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 }
